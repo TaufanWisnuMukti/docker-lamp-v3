@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+
+  apache-php:
+    build: ./dockerfile/apache-php
+    image: php:8.0-apache
+    container_name: apache-php
+    volumes:
+      - ./conf/apache2:/etc/apache2
+      - ./html:/var/www/html
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - mysql
+      - phpmyadmin
+    networks:
+      - local
+
+  mysql:
+    build: ./dockerfile/mysql
+    image: mysql:latest
+    container_name: mysql
+    volumes:
+      - database:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mypassword
+    ports:
+      - "3306:3306"
+    networks:
+      - local
+
+  phpmyadmin:
+    build: ./dockerfile/phpmyadmin
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - local
+
+volumes:
+  database:
+
+networks:
+  local:
