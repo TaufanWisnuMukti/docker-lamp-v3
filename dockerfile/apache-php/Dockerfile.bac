@@ -1,0 +1,30 @@
+FROM php:8.0-apache
+
+#RUN a2enmod rewrite
+#RUN a2enmod headers
+#RUN a2enmod ssl
+#RUN usermod -u 33 www-data
+#RUN usermod -G staff www-data
+
+RUN apt-get update \
+    && apt-get install -y \
+	procps \
+	sqlite3 \
+	nginx \
+	libicu-dev \
+	zlib1g-dev \
+	libzip-dev \
+	ssmtp \
+        # for gd
+        libpng-dev \
+        # for mcrypt
+        libmcrypt-dev \
+        # for soap
+        libxml2-dev \
+        # for xsl
+        libxslt-dev \
+        libgcrypt-dev \
+        # for webp
+        libwebp-dev \
+     && docker-php-ext-install pdo pdo_mysql opcache intl zip gd intl bcmath \
+     && docker-php-ext-enable mcrypt

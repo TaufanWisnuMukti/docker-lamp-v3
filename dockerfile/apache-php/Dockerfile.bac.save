@@ -1,0 +1,61 @@
+FROM php:8.0-apache
+
+RUN apt-get update \
+    && apt-get install -y \
+	procps \
+	sqlite3 \
+	nginx \
+	libicu-dev \
+	zlib1g-dev \
+	libzip-dev \
+	ssmtp \
+        # for gd
+        libpng-dev \
+        # for mcrypt
+        libmcrypt-dev \
+        # for soap
+        libxml2-dev \
+        # for xsl
+        libxslt-dev \
+        libgcrypt-dev \
+        # for webp
+        libwebp-dev \
+     && docker-php-ext-install pdo pdo_mysql opcache intl zip gd intl bcmath
+
+
+##install mcrypt & gd
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libpng-dev \
+    && docker-php-ext-install -j$(nproc) iconv mcrypt \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd
+
+
+## install imagick
+RUN apt-get update && apt-get install -y \
+    libmagickwand-dev --no-install-recommends \
+    && pecl install imagick \
+	&& docker-php-ext-enable imagick
+
+###
+RUN apt-get update && \
+    apt-get install -y \
+        zlib1g-dev
+
+RUN apt-get install -y \
+        libzip-dev \
+        zip \
+  && docker-php-ext-install zip
+
+RUN apt-get install -y \
+        libxml2-dev
+
+RUN /usr/local/bin/docker-php-ext-install mysqli pdo pdo_mysql zip xmlwriter
+RUN apt-get install libssl-dev -y
+
+#install GD
+RUN apt-get update -y && apt-get install -y sendmail libpng-dev
+RUN docker-php-ext-install gd

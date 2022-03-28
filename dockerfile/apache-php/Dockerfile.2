@@ -1,0 +1,60 @@
+FROM php:8.0-apache
+
+#RUN apt-get update \
+#    && apt-get install -y \
+#        #
+#        procps \
+#        #
+#        sqlite3 \
+#        # for nginx
+#        nginx \
+#        #
+#        libicu-dev \
+#        # for zip
+#        zlib1g-dev \
+#        libzip-dev \
+#        #
+#        ssmtp \
+#        # for gd
+#        libpng-dev \
+#        # for mcrypt
+#        libmcrypt-dev \
+#        libfreetype6-dev \
+#        libjpeg62-turbo-dev \
+#        # for soap
+#        libxml2-dev \
+#        # for xsl
+#        libxslt-dev \
+#        libgcrypt-dev \
+#        # for webp
+#        libwebp-dev \
+
+#RUN docker-php-ext-install  pdo pdo_mysql opcache intl zip gd intl bcmath iconv mcrypt
+RUN docker-php-ext-install  pdo pdo_mysql opcache intl intl bcmath iconv 
+## Install ZIP
+RUN apt-get update && \
+    apt-get install -y \
+        zlib1g-dev \
+        libzip-dev \
+        zip \
+    && docker-php-ext-install zip
+
+## Install GD
+RUN apt-get update && \
+    apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libpng-dev \
+    && docker-php-ext-install gd
+
+## Install SOAP
+RUN apt-get update && \
+    apt-get install -y \
+        libxml2-dev \
+    && docker-php-ext-install soap
+
+## Install mcrypt
+RUN apt-get update && \
+    apt-get install -y \
+        libmcrypt-dev \
+    && docker-php-ext-install mcrypt
